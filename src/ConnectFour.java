@@ -1,5 +1,6 @@
 import java.util.Scanner;
-import java.util.HashMap; 
+import java.util.HashMap;
+import java.util.InputMismatchException; 
 
 public class ConnectFour {
 
@@ -19,6 +20,7 @@ public class ConnectFour {
         private int rows, colums; 
         private String[][] board; 
         private final int[] numC, numR; 
+        private boolean gameOver = false; 
 
         public Board(int colums, int rows) {
             this.rows = rows; 
@@ -33,18 +35,33 @@ public class ConnectFour {
             this.numR = new int[this.rows]; 
         }
 
+        private int getIntInput(int lowerBound, int upperBound) {
+            Scanner scan = new Scanner(System.in);
+            int num;  
+            boolean check = true; 
+            while(true) {
+                try {
+                    num = scan.nextInt(); 
+                } catch (InputMismatchException e) {
+                    System.out.println("not a valid input, try again");
+                    num = 0; 
+                }
+                if (num >= lowerBound && num <= upperBound){ 
+                    break; 
+                } else {
+                    System.out.println("input must be between " + lowerBound + " and " + upperBound
+                    + " try again"); 
+                }
+            }
+            return num; 
+        }
         public String play(player_piece playerOne, player_piece playerTwo) {
-            Scanner scanner = new Scanner(System.in); 
             int turn = 0; 
             while(this.gameWon() == null) {
                 showBoard(); 
                 if (turn % 2 == 0) {
                     System.out.println("player ones turn" + "\ngive a colum between one and seven"); 
-                    int inputColum = scanner.nextInt(); 
-                    while(!(inputColum >= 1 && inputColum <= 7)) {
-                        System.out.println("give a number between 1 and 7");
-                        inputColum = scanner.nextInt(); 
-                    }
+                    int inputColum = getIntInput(0, 7); 
                     if(addPiece(inputColum, playerOne, false)) {
                         addPiece(inputColum, playerOne, true);
                         turn++; 
@@ -53,11 +70,7 @@ public class ConnectFour {
                     }
                 } else {
                     System.out.println("player twos turn" + "\ngive a colum between one and seven"); 
-                    int inputColum = scanner.nextInt(); 
-                    while(!(inputColum >= 1 && inputColum <= 7)) {
-                        System.out.println("give a number between 1 and 7");
-                        inputColum = scanner.nextInt(); 
-                    }
+                    int inputColum = getIntInput(0, 7); 
                     if(addPiece(inputColum, playerTwo, false)) {
                         addPiece(inputColum, playerTwo, true);
                         turn++; 
@@ -157,6 +170,13 @@ public class ConnectFour {
         }
 
         public void showBoard() {
+            if (gameOver) { 
+                System.out.println("the board is completely full");
+                return; 
+            }
+            System.out.print(" "); 
+            for(int i = 1; i <= 7; i++) { System.out.print(i + "    "); }
+            System.out.println(""); 
             for(int i = 0; i < 6; i++) {
                 for(int j = 0; j < 7; j++) {
                     if(board[j][i] != null) {
@@ -168,9 +188,17 @@ public class ConnectFour {
                 System.out.println(""); 
             }
         }
-
+        private boolean compFull() {
+            for(String[] col: board) {
+                for(String str: col) {
+                    if (str == null) { return false; }
+                }
+            }
+            return true; 
+        }
         public boolean addPiece(int colum, player_piece player, boolean add) {
             colum--;
+            boolean checkOver = false; 
             for(int i = board[colum].length - 1; i >= 0; i--) {
                 if (board[colum][i] == null) {
                     if(!add) {
@@ -179,6 +207,16 @@ public class ConnectFour {
                     board[colum][i] = player.toString(); 
                     this.numC[colum]++;
                     this.numR[i]++; 
+                    if (i == 0) { 
+                        checkOver = true; 
+                    } else {
+                        return true; 
+                    }
+                }
+            }
+            if (checkOver) {
+                if (compFull()) {
+                    gameOver = true; 
                     return true; 
                 }
             }
