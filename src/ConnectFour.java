@@ -36,21 +36,21 @@ public class ConnectFour {
         }
 
         private int getIntInput(int lowerBound, int upperBound) {
-            Scanner scan = new Scanner(System.in);
             int num;  
-            boolean check = true; 
+            Scanner scan; 
             while(true) {
                 try {
-                    num = scan.nextInt(); 
+                    scan = new Scanner(System.in);
+                    num = scan.nextInt();
+                    if (num >= lowerBound && num <= upperBound) {
+                        break; 
+                    } else {
+                        System.out.println(num + " is not between " + lowerBound + " and " +
+                            upperBound + ", please try again"); 
+                    }
                 } catch (InputMismatchException e) {
                     System.out.println("not a valid input, try again");
                     num = 0; 
-                }
-                if (num >= lowerBound && num <= upperBound){ 
-                    break; 
-                } else {
-                    System.out.println("input must be between " + lowerBound + " and " + upperBound
-                    + " try again"); 
                 }
             }
             return num; 
