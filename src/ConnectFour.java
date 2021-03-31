@@ -31,6 +31,9 @@ public class ConnectFour {
                     board[x][y] = null; 
                 }
             }
+
+            //numC and numR keep track of the marks in each row and colum
+            //we only need to check for a win if there are 4 marks in a colum
             this.numC = new int[this.colums];
             this.numR = new int[this.rows]; 
         }
@@ -79,14 +82,18 @@ public class ConnectFour {
                     }
                 }
             }
+            //makes sure gameWon() wont return a null value then returns gameWon(), or the winner
             return this.gameWon(); 
         }
 
         public String gameWon() {
             for(int i = 0; i < 7; i++) {
+                //only checks each colum if there are 4 in a colum
                 if (numC[i] >= 4) {
                     String last = null; 
                     int count = 1; 
+                    //largestCount keeps track of how many of one mark are in a row, since the four
+                    //in the colum like only mean a certain amount in a row
                     int largestCount = 0; 
                     for(String str: this.board[i]) {
                         if (count > largestCount) { largestCount = count; }
@@ -102,10 +109,12 @@ public class ConnectFour {
                         last = str; 
                         if (count >= 4) { return str; } 
                     }
+                    //changes numC to the largest number of equal marks that came in a row
                     numC[i] = largestCount; 
                 }
             }
             for(int i = 0; i < 6; i ++) {
+                //same thing as the colum check but for rows
                 if (numR[i] >= 4) { 
                     String last = null; 
                     int count = 1;
@@ -128,6 +137,8 @@ public class ConnectFour {
                     numR[i] = largestCount; 
                 }
             }
+            //diagonal count runs two times through the grid, each diagnal
+            //checks "imaginary" places such as [-2][0] to get a clean run through, skips these
             for(int c = -2; c <= 3; c++) {
                 String last = null; 
                 int count = 1; 
