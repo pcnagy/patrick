@@ -32,12 +32,19 @@ public class ConnectFour {
                 }
             }
 
-            //numC and numR keep track of the marks in each row and colum
-            //we only need to check for a win if there are 4 marks in a colum
+            /**
+             * numC and numR keep track of the marks in each row and colum
+             * we only need to check for a win if there are 4 marks in a colum
+             */
             this.numC = new int[this.colums];
             this.numR = new int[this.rows]; 
         }
 
+        /**
+         * function to cleanly get the input of the player
+         * specifies an upper bound and a lower bound
+         * makes sure the player gives an int 
+         */
         private int getIntInput(int lowerBound, int upperBound) {
             int num;  
             Scanner scan; 
@@ -58,10 +65,16 @@ public class ConnectFour {
             }
             return num; 
         }
+        /**
+         * function that plays the game
+         * @param playerOne takes in the first player
+         * @param playerTwo takes in the second player
+         * @return the piece(String) of the player who won 
+         */
         public String play(player_piece playerOne, player_piece playerTwo) {
             int turn = 0; 
             while(this.gameWon() == null) {
-                showBoard(); 
+                this.showBoard(); 
                 if (turn % 2 == 0) {
                     System.out.println("player ones turn" + "\ngive a colum between one and seven"); 
                     int inputColum = getIntInput(0, 7); 
@@ -86,14 +99,26 @@ public class ConnectFour {
             return this.gameWon(); 
         }
 
+        /**
+         * logic to check that the game is over
+         * if the game is not over then we return null
+         * if the game is over we return the piece of the player that won
+         * seperate checks for rows, colum, and diagnoals
+         * for rows and colums we only check in the case that there are 4 pieces in that row or colum
+         * we keep track of the amount in a row/colum with numR/numC
+         * while keeping track of the rows and colums, we keep track of the largest straight run of pieces
+         * the value for numC/numR is changed to the largest straight run of equal pieces
+         * we do this because if we only have two straight pieces we dont want to check again untill 
+         * 2 pieces have been added because until then we have no chance of a win
+         * diagnal logic works through 2 different sets of nested for loops 
+         * the different sets account for the two different directions a diagnal could have 
+         * we "check" areas that are not actually on the 
+         */
         public String gameWon() {
             for(int i = 0; i < 7; i++) {
-                //only checks each colum if there are 4 in a colum
                 if (numC[i] >= 4) {
                     String last = null; 
                     int count = 1; 
-                    //largestCount keeps track of how many of one mark are in a row, since the four
-                    //in the colum like only mean a certain amount in a row
                     int largestCount = 0; 
                     for(String str: this.board[i]) {
                         if (count > largestCount) { largestCount = count; }
@@ -109,12 +134,10 @@ public class ConnectFour {
                         last = str; 
                         if (count >= 4) { return str; } 
                     }
-                    //changes numC to the largest number of equal marks that came in a row
                     numC[i] = largestCount; 
                 }
             }
             for(int i = 0; i < 6; i ++) {
-                //same thing as the colum check but for rows
                 if (numR[i] >= 4) { 
                     String last = null; 
                     int count = 1;
@@ -137,8 +160,6 @@ public class ConnectFour {
                     numR[i] = largestCount; 
                 }
             }
-            //diagonal count runs two times through the grid, each diagnal
-            //checks "imaginary" places such as [-2][0] to get a clean run through, skips these
             for(int c = -2; c <= 3; c++) {
                 String last = null; 
                 int count = 1; 
@@ -180,6 +201,10 @@ public class ConnectFour {
             return null;
         }
 
+        /**
+         * shows the board as long as the game is not over, adds some spacing to each piece so that 
+         * the board shows up clearly as well as adding colum labels at the top
+         */
         public void showBoard() {
             if (gameOver) { 
                 System.out.println("the board is completely full");
@@ -199,6 +224,10 @@ public class ConnectFour {
                 System.out.println(""); 
             }
         }
+
+        /**
+         * returns false if any single space on the board is open, returns true otherwise
+         */
         private boolean compFull() {
             for(String[] col: board) {
                 for(String str: col) {
@@ -207,17 +236,28 @@ public class ConnectFour {
             }
             return true; 
         }
+        /**
+         * 
+         */
         public boolean addPiece(int colum, player_piece player, boolean add) {
+            //fixes the colum from what we give the player to what fits the array
             colum--;
             boolean checkOver = false; 
             for(int i = board[colum].length - 1; i >= 0; i--) {
                 if (board[colum][i] == null) {
+                    //if we said add is false, we don't actually add it we just say that we can
                     if(!add) {
                         return true; 
                     }
+                    //if add is true we make it to this code and add the piece to the board
                     board[colum][i] = player.toString(); 
+                    //change numC and numR to show that we added something to the row/colum
                     this.numC[colum]++;
-                    this.numR[i]++; 
+                    this.numR[i]++;
+                    /*
+                    if we added it to the end of the colum don't return yet and note that we should 
+                    check if the game is over
+                    */
                     if (i == 0) { 
                         checkOver = true; 
                     } else {
@@ -225,6 +265,7 @@ public class ConnectFour {
                     }
                 }
             }
+            //if and only if we just filled a colum we check if the board is completely full 
             if (checkOver) {
                 if (compFull()) {
                     gameOver = true; 
@@ -240,7 +281,8 @@ public class ConnectFour {
         private final String piece, color_code, username; 
         public player_piece(String piece, String username) {
             this.piece = piece; 
-            this.username = username; 
+            this.username = username;
+            //allows a different color for the two players 
             if (player_count == 0) {
                 this.color_code = "\u001B[31m";
             } else {
@@ -255,11 +297,4 @@ public class ConnectFour {
             return this.color_code + piece + "\u001B[0m";
         }
     }
-
 }
-
-/** 
- * 1a.   1b
- * 2a .  2b
- * 3a    3b
- */
