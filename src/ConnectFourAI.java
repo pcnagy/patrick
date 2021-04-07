@@ -560,7 +560,7 @@ public class ConnectFourAI {
                 int count = 1; 
                 int largestCount = 1; 
                 for(int r = 0; r < 6; r++) {
-                    if (c - r > 6 || c - r < 0) { continue; }
+                    if (c - r > 6 || c - r < 0) { last = null; continue; }
                     String str = board[r][c-r]; 
                     if (str == null) {
                         count = 1; 

@@ -42,8 +42,9 @@ public class ConnectFour {
 
         /**
          * function to cleanly get the input of the player
-         * specifies an upper bound and a lower bound
-         * makes sure the player gives an int 
+         * @param lowerBound - lowest number the person can give inclusive
+         * @param upperBound - highest number the person can give incluseive
+         * @return the number, making sure its within the bounds and an int
          */
         private int getIntInput(int lowerBound, int upperBound) {
             int num;  
@@ -113,6 +114,7 @@ public class ConnectFour {
          * diagnal logic works through 2 different sets of nested for loops 
          * the different sets account for the two different directions a diagnal could have 
          * we "check" areas that are not actually on the 
+         * @return the string of the piece that won
          */
         public String gameWon() {
             for(int i = 0; i < 7; i++) {
@@ -226,7 +228,7 @@ public class ConnectFour {
         }
 
         /**
-         * returns false if any single space on the board is open, returns true otherwise
+         * @return false if any single space on the board is open, returns true otherwise
          */
         private boolean compFull() {
             for(String[] col: board) {
